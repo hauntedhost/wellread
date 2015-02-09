@@ -15,21 +15,29 @@
 #
 
 class Completion < ActiveRecord::Base
-  enum media_type: { book: 0,
-                     article: 1,
-                     video: 2,
-                     course: 3 }
+  enum media_type: {
+    book: 0,
+    article: 1,
+    video: 2,
+    course: 3
+  }
 
   belongs_to :user
 
-  # TODO: require media_type, user
-  validates_presence_of :title
+  validates_presence_of :title, :media_type, :user
 
-  after_initialize :set_completed_at
+  after_initialize :ensure_completed_at
+
+  # TODO: remove me once iphone app can interact with devise
+  after_initialize :ensure_user
 
   private
 
-  def set_completed_at
+  def ensure_completed_at
     self.completed_at ||= Time.now
+  end
+
+  def ensure_user
+    self.user ||= User.first
   end
 end
