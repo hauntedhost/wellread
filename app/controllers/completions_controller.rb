@@ -30,6 +30,7 @@ class CompletionsController < ApplicationController
   private
 
   def completion_params
-    params.require(:completion).permit(:summary, :title)
+    params.require(:completion)
+          .permit(:link, :media_type, :summary, :title)
   end
 end
