@@ -1,5 +1,6 @@
 class CompletionsController < ApplicationController
-  skip_before_filter :verify_authenticity_token, only: [:create]
+  # FIXME: better solution
+  skip_before_filter :verify_authenticity_token
 
   def create
     completion = Completion.new(completion_params)
@@ -12,6 +13,9 @@ class CompletionsController < ApplicationController
   end
 
   def destroy
+    completion = Completion.find(params[:id])
+    completion.destroy
+    head :no_content
   end
 
   def index
@@ -25,6 +29,13 @@ class CompletionsController < ApplicationController
   end
 
   def update
+    completion = Completion.find(params[:id])
+    if completion.update_attributes(completion_params)
+      render json: completion, status: :ok
+    else
+      render json: { errors: completion.errors },
+             status: :unprocessable_entity
+    end
   end
 
   private
